@@ -1,4 +1,6 @@
 import React,{ Component } from 'react'
+import Navbar from '../components/Navbar.jsx';
+import Excel from '../components/Excel.jsx';
 
 export default class Index extends React.Component{
    constructor(){
@@ -8,7 +10,8 @@ export default class Index extends React.Component{
    render(){
      return(
        <div>
-         <h1>Welcome to the App Screen</h1>
+        <Navbar/>
+        <Excel/>
        </div>
      );
   }

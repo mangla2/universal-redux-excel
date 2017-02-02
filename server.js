@@ -1,5 +1,9 @@
 'use strict';
 
+require.extensions['.css'] = () => {
+  return;
+};
+
 const express = require('express');
 const webpack= require('webpack');
 const app = express();
@@ -9,6 +13,8 @@ import React from 'react';
 const ReactDOMServer = require('react-dom/server');
 import { renderToString } from 'react-dom/server';
 import { match, RouterContext } from 'react-router';
+import configureStore from './src/store/configureStore';
+import { Provider } from 'react-redux';
 const routes = require('./src/routes');
 
 
@@ -29,13 +35,17 @@ app.use(require('webpack-dev-middleware')(compiler, {
 }));
 
 app.use(require('webpack-hot-middleware')(compiler));
-app.use(express.static(path.resolve(__dirname)));
+app.use(express.static(path.resolve(__dirname,'src','assets')));
 
 }else if(process.env.NODE_ENV === 'production') {
   app.use(express.static(path.resolve(__dirname,'src','assets')));
 }
 
-
+app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname,'src','views'));
+const store=configureStore();
+console.log('mangla');
+console.log(store.getState());
 app.get('*', (req, res)=>{
 
   match({
@@ -49,11 +59,15 @@ app.get('*', (req, res)=>{
      res.redirect(302, redirectLocation.pathname + redirectLocation.search);
    } else if(renderProps) {
       const html = ReactDOMServer.renderToString(
-
+        <Provider store={store}>
           <RouterContext {...renderProps} />
-
+        </Provider>
       );
-      res.render('index', { markup: html });
+      const finalizedState=store.getState();
+      res.render('index', {
+        markup: html,
+        initialState:finalizedState
+      });
     } else {
       res.status(404).send('Not Found');
     }
