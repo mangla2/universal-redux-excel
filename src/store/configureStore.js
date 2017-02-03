@@ -8,13 +8,10 @@ import rootReducer from '../reducer';
 
 export default function configureStore(initialState={}) {
 
-  const logger = createLogger({
-    level: 'info',
-    collapsed: true,
-  });
+
 
   const enhancer = compose(
-  	applyMiddleware(thunk,logger )
+  	applyMiddleware(thunk )
   )
 
 const store = createStore(rootReducer,initialState, enhancer);

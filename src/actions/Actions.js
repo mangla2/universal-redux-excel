@@ -9,3 +9,10 @@ export function addCell() {
     type: 'ADD_CELL',
   }
 }
+
+export function updatedCellValue(value){
+  return{
+    type: 'UPDATED_ACTIVE_VALUE',
+    payload:value
+  }
+}

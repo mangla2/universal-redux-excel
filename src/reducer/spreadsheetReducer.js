@@ -3,7 +3,13 @@ import initialState from "../store/initialState";
 export default function spreadsheetReducer(state=initialState, action) {
 
     switch (action.type) {
+        case "UPDATED_ACTIVE_VALUE":{
 
+          const activeCellValue = action.payload;
+
+            let newState = {...state , activeCellValue};
+            return newState;
+        }
         case "ADD_ROW": {
 		    let rowIndex = state.rowIndex;
 
@@ -31,6 +37,7 @@ export default function spreadsheetReducer(state=initialState, action) {
         case "ADD_CELL": {
 		    let cellTitles = [];
 		    let cellPrefix = state.cellPrefix;
+        
 		    let cellCount = state.cellCount;
 		    let cellIndex = state.cellIndex;
 		    state.cellTitles.map(function(cellTitle, index) {

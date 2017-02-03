@@ -31,7 +31,7 @@ section{
 .excel-tools{
   padding:20px;
   background-color:#eee;
-  text-align:center;
+  
 }
 .excel-wrapper {
 	overflow: auto;
@@ -62,6 +62,9 @@ section{
   text-align:center;
 }
 
+.rowheaders{
+	border-right:1px solid #000000;
+}
 
 table {
 	width: 100%;
@@ -93,4 +96,23 @@ th {
 
 th:first-child {
 	width: 20px;
+}
+.content-box{
+	outline:none;
+	padding:5px;
+	height:inherit;
+}
+
+.selected{
+	border:2px solid green;
+}
+
+td.referrowselected{
+  border:2px solid green;
+	font-weight:900;
+
+}
+
+th.columnselected{
+	border:2px solid green;
 }

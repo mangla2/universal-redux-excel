@@ -1,4 +1,6 @@
 const initialState = {
+	  onMouseDown:false,
+	  activeCellValue:'',
 	  cellIndex : 9,
     cellCount : 9,
     rowIndex : 5,
