@@ -16,3 +16,13 @@ export function updatedCellValue(value){
     payload:value
   }
 }
+
+export function updateCell(value, cellData) {
+  return {
+    type: 'UPDATE_CELL',
+	payload : {
+		value,
+		cellData
+	}
+  }
+}

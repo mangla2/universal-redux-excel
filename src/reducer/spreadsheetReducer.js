@@ -37,7 +37,7 @@ export default function spreadsheetReducer(state=initialState, action) {
         case "ADD_CELL": {
 		    let cellTitles = [];
 		    let cellPrefix = state.cellPrefix;
-        
+
 		    let cellCount = state.cellCount;
 		    let cellIndex = state.cellIndex;
 		    state.cellTitles.map(function(cellTitle, index) {
@@ -69,6 +69,24 @@ export default function spreadsheetReducer(state=initialState, action) {
 
             return newState;
         }
+        case "UPDATE_CELL": {
+		    let payload = action.payload;
+		    let totalRows = [];
+		    state.totalRows.map(function(row, index) {
+			    if(row.index === payload.cellData.x) {
+				    row.data.map(function(cell, cellIndex) {
+					    if(cell.y === payload.cellData.y) {
+					     	row.data[cellIndex].value = payload.value;
+					    }
+				    });
+			    }
+	       totalRows.push(row);
+		    });
+     		let newState = {...state, totalRows};
+
+          return newState;
+        }
+
         default:
         return state;
 

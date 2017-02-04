@@ -7,7 +7,7 @@ class Cell extends React.Component {
   constructor(){
     super();
     this.state={
-      hovered:false
+      hovered:false,
     };
   }
   style() {
@@ -19,22 +19,41 @@ class Cell extends React.Component {
    }
   handleMouseDown(e){
 	 let selectedCells = [];
-	 selectedCells.push(this.props.celldata);
+   selectedCells.push(this.props.celldata);
 	 this.props.updateSelectedCells(selectedCells);
 	 this.props.updateMouseDown(true);
     return false;
     }
-  handleDirections(event){
-   if(event.keyCode == 38){
-     this.props.cellData.y= this.props.cellData.y-1;
+    handleBlur(e){
+  let value = e.target.innerText;
+  if(this.props.celldata.value !== value) {
+   this.props.updateCell(value, this.props.celldata);
   }
-  else if(event.key == 39){
-      this.props.cellData.x = this.props.cellData.x + 1;
-  }
-}
+ }
+ handleKeyEvent = (evt) => {
+	 if(evt.ctrlKey && (evt.which === 66 || evt.which === 73 || evt.which === 85 || evt.which === 86 )) {
+		var elm = evt.target;
+		evt.preventDefault();
+	 switch(evt.which) {
+	   case 66 :  {
+		   elm.style.fontWeight = 'bold';
+		break;
+	   }
+	   case 73: {
+		   	elm.style.fontFamily = 'italic';
+		break
+	   }
+	   case 85 : {
+		     	elm.style.textDecoration = 'underline';
+	   }
 
+
+	}
+	 }
+  }
     handleFocus(e){
 	    e.target.focus();
+      console.log(this.props.celldata);
       this.props.updateActiveCellValue(this.props.celldata);
     }
     onMouseOver() {
@@ -48,14 +67,15 @@ class Cell extends React.Component {
    render() {
 	  let cell = JSON.stringify(this.props.celldata);
     let tdClass = '';
+
     this.props.selectedCell.map((hcell)=> {
 		    if(hcell.y === this.props.celldata.y && hcell.x === this.props.celldata.x){
 				tdClass +='selected';
 			}
 	  })
     return (
-	          <td style={this.style()}  className={tdClass} key={this.key} onKeyPress={this.handleDirections.bind(this)} onMouseOver={this.onMouseOver.bind(this)} onMouseOut={this.onMouseOut.bind(this)}  data-cell={cell} data-index={this.props.celldata.y}>
-              <div className="content-box" contentEditable onMouseDown={this.handleMouseDown.bind(this)} onFocus={this.handleFocus.bind(this)}>{this.props.celldata.value}</div>
+	          <td style={this.style()}  className={tdClass} key={this.key} onMouseOver={this.onMouseOver.bind(this)} onMouseOut={this.onMouseOut.bind(this)}  data-cell={cell} data-index={this.props.celldata.y}>
+              <div className="content-box" contentEditable onMouseDown={this.handleMouseDown.bind(this)} onFocus={this.handleFocus.bind(this)} onKeyDown={this.handleKeyEvent.bind(this)} onBlur={this.handleBlur.bind(this)}>{this.props.celldata.value}</div>
             </td>
     );
   }

@@ -4,7 +4,7 @@ import { connect } from "react-redux";
 import ColumnHeader from "./excel/ColumnHeader.jsx";
 import CellRow from "./excel/CellRow.jsx";
 import ExcelSearch from './excel/ExcelSearch.jsx';
-import { addRow, addCell, updatedCellValue } from "../actions/Actions";
+import { addRow, addCell, updatedCellValue,updateCell } from "../actions/Actions";
 
 require('../assets/style.css');
 
@@ -16,17 +16,27 @@ class Excel extends React.Component{
       activeCellValue:'',
       isMouseDown:false,
       selectedCells:[],
+      boldStatus:false,
+      italicStatus:false,
+      underlineStatus:false
+
     }
   }
 
 
    updateMouseDown(value){
-     this.setState({ isMouseDown: value})
+     this.setState({
+       isMouseDown: value,
+      })
    }
 
    updateSelectedCells(arr){
      this.setState({ selectedCells: arr })
    }
+   updateCell(value, cellData){
+		this.props.updateCellProps(value, cellData);
+	}
+
    addRow(){
       this.props.addRow();
     }
@@ -34,6 +44,27 @@ class Excel extends React.Component{
    addColumn(){
  	    this.props.addColumn();
  	}
+
+  addBoldStyling(){
+
+    // this.state.selectedCells.map((scell)=>{
+    //     if(scell.x === this.props.activeCellValue.x && scell.y ===this.props.activeCellValue.y){
+    //
+    //       this.setState({
+    //         styleClass:'bold'
+    //       })
+    //     }
+    // })
+
+    this.setState( { boldStatus : !this.state.boldStatus } );
+
+  }
+  addItalicStyling(){
+    this.setState( { italicStatus : !this.state.italicStatus } );
+  }
+  addUnderlineStyling(){
+    this.setState( { underlineStatus : !this.state.underlineStatus } );
+  }
   componentWillReceiveProps(nextProps) {
     if (nextProps.activeCellValue) {
 
@@ -58,7 +89,8 @@ class Excel extends React.Component{
    render(){
      let tableRows = [], tableHeads = [];
 		const that = this;
-
+    console.log('Know the styleClass');
+    console.log(this.state.styleClass);
 		this.props.cellTitles.map(function(cell,index) {
             tableHeads.push(<ColumnHeader key={index} theaderdata={cell}
                     activeCellValue={that.state.activeCellValue}
@@ -75,8 +107,11 @@ class Excel extends React.Component{
                                  isMouseDown={that.state.isMouseDown}
                                  selectedCell={that.state.selectedCells}
                                  updateMouseDown={that.updateMouseDown.bind(that)}
-
+                                 updateCell={that.updateCell.bind(that)}
                                  updateSelectedCells={that.updateSelectedCells.bind(that)}
+                                 boldStyle={that.state.boldStatus ? 'bold':''}
+                                 italicsStyle={that.state.italicStatus ? 'italic':''}
+                                 underlineStyle={that.state.underlineStatus ? 'underline':''}
                                  />);
         });
      return(
@@ -86,7 +121,11 @@ class Excel extends React.Component{
     <div className="col-md-4"><ExcelSearch activeCellValue={this.state.activeCellValue} /></div>
    <div className="col-md-8">
    <button id="add-row" onClick={this.addRow.bind(this)}><i className="fa fa-arrows-v" aria-hidden="true"></i></button><span> | </span>
-   <button id="add-column" onClick={this.addColumn.bind(this)}><i className="fa fa-arrows-h" aria-hidden="true"></i></button>
+   <button id="add-column" onClick={this.addColumn.bind(this)}><i className="fa fa-arrows-h" aria-hidden="true"></i></button><span> | </span>
+   <button id="bold" onClick={this.addBoldStyling.bind(this)}><i className="fa fa-bold" aria-hidden="true"></i></button><span> | </span>
+   <button id="italic" onClick={this.addItalicStyling.bind(this)}><i className="fa fa-italic" aria-hidden="true"></i></button><span> | </span>
+   <button id="underline" onClick={this.addUnderlineStyling.bind(this)}><i className="fa fa-underline" aria-hidden="true"></i></button>
+
    </div>
    </div><br/>
             <div className="excel-table-wrapper col-md-12">
@@ -120,7 +159,8 @@ const mapDispatchToProps=(dispatch)=> {
   return {
 
     addRow:()=>{dispatch(addRow())},
-    addColumn:()=>{dispatch(addCell())}
+    addColumn:()=>{dispatch(addCell())},
+    updateCellProps:(value,cellData)=>{dispatch(updateCell(value,cellData))}
   }
 }
 

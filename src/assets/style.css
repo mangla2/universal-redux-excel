@@ -65,7 +65,15 @@ section{
 .rowheaders{
 	border-right:1px solid #000000;
 }
-
+.bold{
+	font-weight:800;
+}
+.italics{
+  font-style:italic;
+}
+.underline{
+	text-decoration:underline;
+}
 table {
 	width: 100%;
 	clear: both;
