@@ -31,7 +31,7 @@ section{
 .excel-tools{
   padding:20px;
   background-color:#eee;
-  
+
 }
 .excel-wrapper {
 	overflow: auto;
@@ -59,13 +59,21 @@ section{
   padding:5px;
   font-size:15px;
   font-family: 'Quicksand', sans-serif;
-  text-align:center;
+  text-align:center !important;
 }
 
 .rowheaders{
 	border-right:1px solid #000000;
 }
-
+.bold{
+	font-weight:800;
+}
+.italics{
+  font-style:italic;
+}
+.underline{
+	text-decoration:underline;
+}
 table {
 	width: 100%;
 	clear: both;

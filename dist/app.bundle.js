@@ -75,7 +75,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/ 	}
 /******/ 	
 /******/ 	var hotApplyOnUpdate = true;
-/******/ 	var hotCurrentHash = "289192c07190099c6075"; // eslint-disable-line no-unused-vars
+/******/ 	var hotCurrentHash = "c3f2d8c69bab68eb5483"; // eslint-disable-line no-unused-vars
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotCurrentParents = []; // eslint-disable-line no-unused-vars
 /******/ 	
@@ -18188,6 +18188,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports.addRow = addRow;
 	exports.addCell = addCell;
 	exports.updatedCellValue = updatedCellValue;
+	exports.updatedSelectedCells = updatedSelectedCells;
+	exports.updateCell = updateCell;
 	function addRow() {
 	  return {
 	    type: 'ADD_ROW'
@@ -18204,6 +18206,22 @@ return /******/ (function(modules) { // webpackBootstrap
 	  return {
 	    type: 'UPDATED_ACTIVE_VALUE',
 	    payload: value
+	  };
+	}
+
+	function updatedSelectedCells(arr) {
+	  return {
+	    type: 'UPDATE_SELECTED_CELLS',
+	    payload: arr
+	  };
+	}
+	function updateCell(value, cellData) {
+	  return {
+	    type: 'UPDATE_CELL',
+	    payload: {
+	      value: value,
+	      cellData: cellData
+	    }
 	  };
 	}
 
@@ -43278,7 +43296,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	    _this.state = {
 	      activeCellValue: '',
 	      isMouseDown: false,
-	      selectedCells: []
+	      selectedCells: [],
+	      boldStatus: false,
+	      italicStatus: false,
+	      underlineStatus: false
+
 	    };
 	    return _this;
 	  }
@@ -43286,12 +43308,19 @@ return /******/ (function(modules) { // webpackBootstrap
 	  _createClass(Excel, [{
 	    key: "updateMouseDown",
 	    value: function updateMouseDown(value) {
-	      this.setState({ isMouseDown: value });
+	      this.setState({
+	        isMouseDown: value
+	      });
 	    }
+
+	    //  updateSelectedCells(arr){
+	    //    this.setState({ selectedCells: arr })
+	    //  }
+
 	  }, {
-	    key: "updateSelectedCells",
-	    value: function updateSelectedCells(arr) {
-	      this.setState({ selectedCells: arr });
+	    key: "updateCell",
+	    value: function updateCell(value, cellData) {
+	      this.props.updateCellProps(value, cellData);
 	    }
 	  }, {
 	    key: "addRow",
@@ -43304,13 +43333,31 @@ return /******/ (function(modules) { // webpackBootstrap
 	      this.props.addColumn();
 	    }
 	  }, {
+	    key: "addBoldStyling",
+	    value: function addBoldStyling() {
+	      this.setState({ boldStatus: !this.state.boldStatus });
+	    }
+	  }, {
+	    key: "addItalicStyling",
+	    value: function addItalicStyling() {
+	      this.setState({ italicStatus: !this.state.italicStatus });
+	    }
+	  }, {
+	    key: "addUnderlineStyling",
+	    value: function addUnderlineStyling() {
+	      this.setState({ underlineStatus: !this.state.underlineStatus });
+	    }
+	  }, {
 	    key: "componentWillReceiveProps",
 	    value: function componentWillReceiveProps(nextProps) {
 	      if (nextProps.activeCellValue) {
-	        console.log(nextProps.activeCellValue);
+
 	        this.setState({
-	          activeCellValue: nextProps.activeCellValue
+	          activeCellValue: this.props.activeCellValue
 	        });
+	      }
+	      if (nextProps.selectedCells) {
+	        this.setState({ selectedCells: this.props.selectedCells });
 	      }
 	    }
 	  }, {
@@ -43332,15 +43379,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	      var tableRows = [],
 	          tableHeads = [];
 	      var that = this;
-
 	      this.props.cellTitles.map(function (cell, index) {
 	        tableHeads.push(_react2.default.createElement(_ColumnHeader2.default, { key: index, theaderdata: cell,
 	          activeCellValue: that.state.activeCellValue,
 	          isMouseDown: that.state.isMouseDown,
 	          selectedCell: that.state.selectedCells,
-	          updateMouseDown: that.updateMouseDown.bind(that),
+	          updateMouseDown: that.updateMouseDown.bind(that)
 
-	          updateSelectedCells: that.updateSelectedCells.bind(that) }));
+	        }));
 	      });
 	      this.props.totalRows.map(function (row, index) {
 	        tableRows.push(_react2.default.createElement(_CellRow2.default, { key: index + 1,
@@ -43349,8 +43395,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	          isMouseDown: that.state.isMouseDown,
 	          selectedCell: that.state.selectedCells,
 	          updateMouseDown: that.updateMouseDown.bind(that),
+	          updateCell: that.updateCell.bind(that),
 
-	          updateSelectedCells: that.updateSelectedCells.bind(that)
+	          boldStyle: that.state.boldStatus ? 'bold' : '',
+	          italicsStyle: that.state.italicStatus ? 'italic' : '',
+	          underlineStyle: that.state.underlineStatus ? 'underline' : ''
 	        }));
 	      });
 	      return _react2.default.createElement(
@@ -43384,6 +43433,36 @@ return /******/ (function(modules) { // webpackBootstrap
 	                "button",
 	                { id: "add-column", onClick: this.addColumn.bind(this) },
 	                _react2.default.createElement("i", { className: "fa fa-arrows-h", "aria-hidden": "true" })
+	              ),
+	              _react2.default.createElement(
+	                "span",
+	                null,
+	                " | "
+	              ),
+	              _react2.default.createElement(
+	                "button",
+	                { id: "bold", onClick: this.addBoldStyling.bind(this) },
+	                _react2.default.createElement("i", { className: "fa fa-bold", "aria-hidden": "true" })
+	              ),
+	              _react2.default.createElement(
+	                "span",
+	                null,
+	                " | "
+	              ),
+	              _react2.default.createElement(
+	                "button",
+	                { id: "italic", onClick: this.addItalicStyling.bind(this) },
+	                _react2.default.createElement("i", { className: "fa fa-italic", "aria-hidden": "true" })
+	              ),
+	              _react2.default.createElement(
+	                "span",
+	                null,
+	                " | "
+	              ),
+	              _react2.default.createElement(
+	                "button",
+	                { id: "underline", onClick: this.addUnderlineStyling.bind(this) },
+	                _react2.default.createElement("i", { className: "fa fa-underline", "aria-hidden": "true" })
 	              )
 	            )
 	          ),
@@ -43426,7 +43505,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	  return {
 	    cellTitles: state.spreadsheetReducer.cellTitles,
 	    totalRows: state.spreadsheetReducer.totalRows,
-	    activeCellValue: state.spreadsheetReducer.activeCellValue
+	    activeCellValue: state.spreadsheetReducer.activeCellValue,
+	    selectedCells: state.spreadsheetReducer.selectedCell
 	  };
 	};
 
@@ -43438,6 +43518,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    },
 	    addColumn: function addColumn() {
 	      dispatch((0, _Actions.addCell)());
+	    },
+	    updateCellProps: function updateCellProps(value, cellData) {
+	      dispatch((0, _Actions.updateCell)(value, cellData));
 	    }
 	  };
 	};
@@ -43549,6 +43632,30 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    var _this = _possibleConstructorReturn(this, (Cell.__proto__ || Object.getPrototypeOf(Cell)).call(this));
 
+	    _this.handleKeyEvent = function (evt) {
+	      if (evt.ctrlKey && (evt.which === 66 || evt.which === 73 || evt.which === 85 || evt.which === 86)) {
+	        var elm = evt.target;
+	        evt.preventDefault();
+	        switch (evt.which) {
+	          case 66:
+	            {
+	              elm.style.fontWeight = 'bold';
+	              break;
+	            }
+	          case 73:
+	            {
+	              elm.style.fontStyle = 'italic';
+	              break;
+	            }
+	          case 85:
+	            {
+	              elm.style.textDecoration = 'underline';
+	            }
+
+	        }
+	      }
+	    };
+
 	    _this.state = {
 	      hovered: false
 	    };
@@ -43569,23 +43676,30 @@ return /******/ (function(modules) { // webpackBootstrap
 	    value: function handleMouseDown(e) {
 	      var selectedCells = [];
 	      selectedCells.push(this.props.celldata);
-	      this.props.updateSelectedCells(selectedCells);
+	      this.props.updateSelected(selectedCells);
 	      this.props.updateMouseDown(true);
 	      return false;
 	    }
 	  }, {
-	    key: "handleDirections",
-	    value: function handleDirections(event) {
-	      if (event.keyCode == 38) {
-	        this.props.cellData.y = this.props.cellData.y - 1;
-	      } else if (event.key == 39) {
-	        this.props.cellData.x = this.props.cellData.x + 1;
+	    key: "changeHandler",
+	    value: function changeHandler(e) {
+	      var selectedCells = [];
+	      selectedCells.push(this.props.celldata);
+	      this.props.updateSelected(selectedCells);
+	    }
+	  }, {
+	    key: "handleBlur",
+	    value: function handleBlur(e) {
+	      var value = e.target.innerText;
+	      if (this.props.celldata.value !== value) {
+	        this.props.updateCell(value, this.props.celldata);
 	      }
 	    }
 	  }, {
 	    key: "handleFocus",
 	    value: function handleFocus(e) {
 	      e.target.focus();
+
 	      this.props.updateActiveCellValue(this.props.celldata);
 	    }
 	  }, {
@@ -43605,17 +43719,18 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	      var cell = JSON.stringify(this.props.celldata);
 	      var tdClass = '';
-	      this.props.selectedCell.map(function (hcell) {
+
+	      this.props.selected.map(function (hcell) {
 	        if (hcell.y === _this2.props.celldata.y && hcell.x === _this2.props.celldata.x) {
 	          tdClass += 'selected';
 	        }
 	      });
 	      return _react2.default.createElement(
 	        "td",
-	        { style: this.style(), className: tdClass, key: this.key, onKeyPress: this.handleDirections.bind(this), onMouseOver: this.onMouseOver.bind(this), onMouseOut: this.onMouseOut.bind(this), "data-cell": cell, "data-index": this.props.celldata.y },
+	        { style: this.style(), className: tdClass, key: this.key, onMouseOver: this.onMouseOver.bind(this), onMouseOut: this.onMouseOut.bind(this), "data-cell": cell, "data-index": this.props.celldata.y },
 	        _react2.default.createElement(
 	          "div",
-	          { className: "content-box", contentEditable: true, onMouseDown: this.handleMouseDown.bind(this), onFocus: this.handleFocus.bind(this) },
+	          { className: "content-box", contentEditable: true, onChange: this.changeHandler.bind(this), onMouseDown: this.handleMouseDown.bind(this), onFocus: this.handleFocus.bind(this), onKeyDown: this.handleKeyEvent.bind(this), onBlur: this.handleBlur.bind(this) },
 	          this.props.celldata.value
 	        )
 	      );
@@ -43629,6 +43744,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	  return {
 	    updateActiveCellValue: function updateActiveCellValue(value) {
 	      dispatch((0, _Actions.updatedCellValue)(value));
+	    },
+	    updateSelected: function updateSelected(value) {
+	      dispatch((0, _Actions.updatedSelectedCells)(value));
 	    }
 
 	  };
@@ -43682,11 +43800,9 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    _this.render = function () {
 	      var tableCells = [];
-
 	      tableCells.push(_react2.default.createElement(_RowHeader2.default, { key: 0, index: _this.props.trowdata.index,
 	        data: _this.props.trowdata.data,
 	        updateMouseDown: _this.props.updateMouseDown,
-	        updateSelectedCells: _this.props.updateSelectedCells,
 
 	        isMouseDown: _this.props.isMouseDown,
 	        activeCellValue: _this.props.activeCellValue,
@@ -43695,12 +43811,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	      _this.props.trowdata.data.map(function (tcell, index) {
 	        tableCells.push(_react2.default.createElement(_Cell2.default, { key: index + 1, celldata: tcell,
 	          updateMouseDown: that.props.updateMouseDown,
+	          updateCell: that.props.updateCell,
 
-	          updateSelectedCells: that.props.updateSelectedCells,
 	          isMouseDown: that.props.isMouseDown,
 	          activeCellValue: that.props.activeCellValue,
-	          selectedCell: that.props.selectedCell
-
+	          selected: that.props.selectedc,
+	          boldClass: that.props.boldStyle,
+	          italicsClass: that.props.italicsStyle,
+	          underlineClass: that.props.underlineStyle
 	        }));
 	      });
 
@@ -43711,13 +43829,23 @@ return /******/ (function(modules) { // webpackBootstrap
 	      );
 	    };
 
+	    _this.state = {
+	      currentValue: ''
+	    };
 	    return _this;
 	  }
 
 	  return CellRow;
 	}(_react2.default.Component);
 
-	exports.default = CellRow;
+	var mapStateToProps = function mapStateToProps(state) {
+	  return {
+
+	    selectedc: state.spreadsheetReducer.selectedCell
+	  };
+	};
+
+	exports.default = (0, _reactRedux.connect)(mapStateToProps, null)(CellRow);
 
 	/* REACT HOT LOADER */ }).call(this); } finally { if (true) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = __webpack_require__(24); if (makeExportsHot(module, __webpack_require__(1))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot apply hot update to " + "CellRow.jsx" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(20)(module)))
@@ -43978,7 +44106,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      var classes = (0, _classnames2.default)('rowcolumnheaders', 'rowheaders');
 	      return _react2.default.createElement(
 	        "td",
-	        { className: myStyle, style: _this.style(), onMouseDown: _this.handleMouseDown.bind(_this), onMouseOver: _this.onMouseOver.bind(_this), onMouseOut: _this.onMouseOut.bind(_this), onClick: _this.handleOnClick.bind(_this), key: _this.key, "data-index": _this.props.index },
+	        { className: myStyle, style: _this.style(), onMouseDown: _this.handleMouseDown.bind(_this), onMouseOver: _this.onMouseOver.bind(_this), onMouseOut: _this.onMouseOut.bind(_this), key: _this.key, "data-index": _this.props.index },
 	        rowNumber
 	      );
 	    };
@@ -44007,11 +44135,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	    key: "onMouseOut",
 	    value: function onMouseOut() {
 	      this.setState({ rowhover: false });
-	    }
-	  }, {
-	    key: "handleOnClick",
-	    value: function handleOnClick() {
-	      this.props.updateActiveCellValue({ x: this.props.index, y: '', value: '' });
 	    }
 	  }, {
 	    key: "handleMouseDown",
@@ -44162,14 +44285,14 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	exports.default = spreadsheetReducer;
 
-	var _initialState = __webpack_require__(503);
+	var _localStorage = __webpack_require__(503);
 
-	var _initialState2 = _interopRequireDefault(_initialState);
+	var _localStorage2 = _interopRequireDefault(_localStorage);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	function spreadsheetReducer() {
-		var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : _initialState2.default;
+		var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : _localStorage2.default.getState();
 		var action = arguments[1];
 
 
@@ -44180,7 +44303,19 @@ return /******/ (function(modules) { // webpackBootstrap
 					var activeCellValue = action.payload;
 
 					var newState = _extends({}, state, { activeCellValue: activeCellValue });
+					_localStorage2.default.setState(newState);
+					console.log(_localStorage2.default.getState());
 					return newState;
+				}
+			case "UPDATE_SELECTED_CELLS":
+				{
+
+					var selectedCell = action.payload;
+
+					var _newState = _extends({}, state, { selectedCell: selectedCell });
+					_localStorage2.default.setState(_newState);
+					console.log(_localStorage2.default.getState());
+					return _newState;
 				}
 			case "ADD_ROW":
 				{
@@ -44204,6 +44339,7 @@ return /******/ (function(modules) { // webpackBootstrap
 						rowIndex = rowIndex + 1;
 
 						var newState = _extends({}, state, { totalRows: totalRows, rowIndex: rowIndex });
+						_localStorage2.default.setState(newState);
 
 						return {
 							v: newState
@@ -44246,7 +44382,7 @@ return /******/ (function(modules) { // webpackBootstrap
 						}
 						cellTitles.push(cellTitle);
 						var newState = _extends({}, state, { totalRows: totalRows, cellCount: cellCount, cellIndex: cellIndex, cellPrefix: cellPrefix, cellTitles: cellTitles });
-
+						_localStorage2.default.setState(newState);
 						return {
 							v: newState
 						};
@@ -44254,6 +44390,31 @@ return /******/ (function(modules) { // webpackBootstrap
 
 					if ((typeof _ret2 === "undefined" ? "undefined" : _typeof(_ret2)) === "object") return _ret2.v;
 				}
+			case "UPDATE_CELL":
+				{
+					var _ret3 = function () {
+						var payload = action.payload;
+						var totalRows = [];
+						state.totalRows.map(function (row, index) {
+							if (row.index === payload.cellData.x) {
+								row.data.map(function (cell, cellIndex) {
+									if (cell.y === payload.cellData.y) {
+										row.data[cellIndex].value = payload.value;
+									}
+								});
+							}
+							totalRows.push(row);
+						});
+						var newState = _extends({}, state, { totalRows: totalRows });
+						_localStorage2.default.setState(newState);
+						return {
+							v: newState
+						};
+					}();
+
+					if ((typeof _ret3 === "undefined" ? "undefined" : _typeof(_ret3)) === "object") return _ret3.v;
+				}
+
 			default:
 				return state;
 
@@ -44322,10 +44483,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	function configureStore() {
 	  var initialState = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 
-
 	  var enhancer = (0, _redux.compose)((0, _redux.applyMiddleware)(_reduxThunk2.default));
 
-	  var store = (0, _redux.createStore)(_reducer2.default, initialState, enhancer);
+	  var store = (0, _redux.createStore)(_reducer2.default, enhancer);
 
 	  if (true) {
 	    module.hot.accept(function () {
@@ -44350,9 +44510,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
 	var initialState = {
 	  onMouseDown: false,
 	  activeCellValue: '',
+	  selectedCell: [],
 	  cellIndex: 9,
 	  cellCount: 9,
 	  rowIndex: 5,
@@ -44361,9 +44527,41 @@ return /******/ (function(modules) { // webpackBootstrap
 	  totalRows: [{ index: 0, data: [{ x: 0, y: 0, value: '' }, { x: 0, y: 1, value: '' }, { x: 0, y: 2, value: '' }, { x: 0, y: 3, value: '' }, { x: 0, y: 4, value: '' }, { x: 0, y: 5, value: '' }, { x: 0, y: 6, value: '' }, { x: 0, y: 7, value: '' }, { x: 0, y: 8, value: '' }] }, { index: 1, data: [{ x: 1, y: 0, value: '' }, { x: 1, y: 1, value: '' }, { x: 1, y: 2, value: '' }, { x: 1, y: 3, value: '' }, { x: 1, y: 4, value: '' }, { x: 1, y: 5, value: '' }, { x: 1, y: 6, value: '' }, { x: 1, y: 7, value: '' }, { x: 1, y: 8, value: '' }] }, { index: 2, data: [{ x: 2, y: 0, value: '' }, { x: 2, y: 1, value: '' }, { x: 2, y: 2, value: '' }, { x: 2, y: 3, value: '' }, { x: 2, y: 4, value: '' }, { x: 2, y: 5, value: '' }, { x: 2, y: 6, value: '' }, { x: 2, y: 7, value: '' }, { x: 2, y: 8, value: '' }] }, { index: 3, data: [{ x: 3, y: 0, value: '' }, { x: 3, y: 1, value: '' }, { x: 3, y: 2, value: '' }, { x: 3, y: 3, value: '' }, { x: 3, y: 4, value: '' }, { x: 3, y: 5, value: '' }, { x: 3, y: 6, value: '' }, { x: 3, y: 7, value: '' }, { x: 3, y: 8, value: '' }] }, { index: 4, data: [{ x: 4, y: 0, value: '' }, { x: 4, y: 1, value: '' }, { x: 4, y: 2, value: '' }, { x: 4, y: 3, value: '' }, { x: 4, y: 4, value: '' }, { x: 4, y: 5, value: '' }, { x: 4, y: 6, value: '' }, { x: 4, y: 7, value: '' }, { x: 4, y: 8, value: '' }] }]
 	};
 
-	exports.default = initialState;
+	var Storage = function () {
+	  function Storage() {
+	    _classCallCheck(this, Storage);
+	  }
 
-	/* REACT HOT LOADER */ }).call(this); } finally { if (true) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = __webpack_require__(24); if (makeExportsHot(module, __webpack_require__(1))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot apply hot update to " + "initialState.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
+	  _createClass(Storage, [{
+	    key: 'getState',
+	    value: function getState() {
+	      var state = void 0;
+
+	      if (typeof localStorage !== "undefined") {
+
+	        state = JSON.parse(localStorage.getItem('sheetstate'));
+	        return state === null ? initialState : state;
+	      }
+	      return initialState;
+	    }
+	  }, {
+	    key: 'setState',
+	    value: function setState(state) {
+
+	      if (typeof localStorage !== 'undefined') {
+	        localStorage.setItem('sheetstate', JSON.stringify(state));
+	      }
+	    }
+	  }]);
+
+	  return Storage;
+	}();
+
+	var storage = new Storage();
+
+	exports.default = storage;
+
+	/* REACT HOT LOADER */ }).call(this); } finally { if (true) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = __webpack_require__(24); if (makeExportsHot(module, __webpack_require__(1))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot apply hot update to " + "localStorage.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(20)(module)))
 
 /***/ },

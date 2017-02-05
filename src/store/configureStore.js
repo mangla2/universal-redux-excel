@@ -7,14 +7,11 @@ import rootReducer from '../reducer';
 
 
 export default function configureStore(initialState={}) {
-
-
-
-  const enhancer = compose(
+ const enhancer = compose(
   	applyMiddleware(thunk )
   )
 
-const store = createStore(rootReducer,initialState, enhancer);
+const store = createStore(rootReducer, enhancer);
 
 
 

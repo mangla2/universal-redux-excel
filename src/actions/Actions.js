@@ -17,6 +17,12 @@ export function updatedCellValue(value){
   }
 }
 
+export function updatedSelectedCells(arr){
+  return{
+    type: 'UPDATE_SELECTED_CELLS',
+    payload:arr
+  }
+}
 export function updateCell(value, cellData) {
   return {
     type: 'UPDATE_CELL',

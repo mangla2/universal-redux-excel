@@ -1,6 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import {updatedCellValue} from '../../actions/Actions';
+import {updatedCellValue, updatedSelectedCells } from '../../actions/Actions';
 import {connect} from 'react-redux';
 
 class Cell extends React.Component {
@@ -20,10 +20,15 @@ class Cell extends React.Component {
   handleMouseDown(e){
 	 let selectedCells = [];
    selectedCells.push(this.props.celldata);
-	 this.props.updateSelectedCells(selectedCells);
+	 this.props.updateSelected(selectedCells);
 	 this.props.updateMouseDown(true);
     return false;
     }
+   changeHandler(e){
+     let selectedCells = [];
+     selectedCells.push(this.props.celldata);
+    this.props.updateSelected(selectedCells);
+   }
     handleBlur(e){
   let value = e.target.innerText;
   if(this.props.celldata.value !== value) {
@@ -40,7 +45,7 @@ class Cell extends React.Component {
 		break;
 	   }
 	   case 73: {
-		   	elm.style.fontFamily = 'italic';
+		   	elm.style.fontStyle = 'italic';
 		break
 	   }
 	   case 85 : {
@@ -53,7 +58,7 @@ class Cell extends React.Component {
   }
     handleFocus(e){
 	    e.target.focus();
-      console.log(this.props.celldata);
+
       this.props.updateActiveCellValue(this.props.celldata);
     }
     onMouseOver() {
@@ -68,22 +73,24 @@ class Cell extends React.Component {
 	  let cell = JSON.stringify(this.props.celldata);
     let tdClass = '';
 
-    this.props.selectedCell.map((hcell)=> {
+    this.props.selected.map((hcell)=> {
 		    if(hcell.y === this.props.celldata.y && hcell.x === this.props.celldata.x){
 				tdClass +='selected';
 			}
 	  })
     return (
 	          <td style={this.style()}  className={tdClass} key={this.key} onMouseOver={this.onMouseOver.bind(this)} onMouseOut={this.onMouseOut.bind(this)}  data-cell={cell} data-index={this.props.celldata.y}>
-              <div className="content-box" contentEditable onMouseDown={this.handleMouseDown.bind(this)} onFocus={this.handleFocus.bind(this)} onKeyDown={this.handleKeyEvent.bind(this)} onBlur={this.handleBlur.bind(this)}>{this.props.celldata.value}</div>
+              <div className="content-box" contentEditable onChange={this.changeHandler.bind(this)} onMouseDown={this.handleMouseDown.bind(this)} onFocus={this.handleFocus.bind(this)} onKeyDown={this.handleKeyEvent.bind(this)} onBlur={this.handleBlur.bind(this)}>{this.props.celldata.value}</div>
             </td>
     );
   }
 }
 
+
 const mapDispatchToProps=(dispatch)=> {
   return {
     updateActiveCellValue:(value) => {dispatch(updatedCellValue(value))},
+    updateSelected:(value)=>{dispatch(updatedSelectedCells(value))}
 
   }
 }

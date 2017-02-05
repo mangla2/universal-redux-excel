@@ -30,9 +30,9 @@ class Excel extends React.Component{
       })
    }
 
-   updateSelectedCells(arr){
-     this.setState({ selectedCells: arr })
-   }
+  //  updateSelectedCells(arr){
+  //    this.setState({ selectedCells: arr })
+  //  }
    updateCell(value, cellData){
 		this.props.updateCellProps(value, cellData);
 	}
@@ -46,16 +46,6 @@ class Excel extends React.Component{
  	}
 
   addBoldStyling(){
-
-    // this.state.selectedCells.map((scell)=>{
-    //     if(scell.x === this.props.activeCellValue.x && scell.y ===this.props.activeCellValue.y){
-    //
-    //       this.setState({
-    //         styleClass:'bold'
-    //       })
-    //     }
-    // })
-
     this.setState( { boldStatus : !this.state.boldStatus } );
 
   }
@@ -71,6 +61,9 @@ class Excel extends React.Component{
       this.setState({
         activeCellValue:this.props.activeCellValue
       });
+    }
+    if(nextProps.selectedCells){
+      this.setState({ selectedCells: this.props.selectedCells })
     }
   }
 
@@ -89,8 +82,6 @@ class Excel extends React.Component{
    render(){
      let tableRows = [], tableHeads = [];
 		const that = this;
-    console.log('Know the styleClass');
-    console.log(this.state.styleClass);
 		this.props.cellTitles.map(function(cell,index) {
             tableHeads.push(<ColumnHeader key={index} theaderdata={cell}
                     activeCellValue={that.state.activeCellValue}
@@ -98,7 +89,7 @@ class Excel extends React.Component{
                     selectedCell={that.state.selectedCells}
                     updateMouseDown={that.updateMouseDown.bind(that)}
 
-                    updateSelectedCells={that.updateSelectedCells.bind(that)} />);
+                   />);
         });
   		this.props.totalRows.map(function(row, index) {
             tableRows.push(<CellRow key={index + 1}
@@ -108,7 +99,7 @@ class Excel extends React.Component{
                                  selectedCell={that.state.selectedCells}
                                  updateMouseDown={that.updateMouseDown.bind(that)}
                                  updateCell={that.updateCell.bind(that)}
-                                 updateSelectedCells={that.updateSelectedCells.bind(that)}
+
                                  boldStyle={that.state.boldStatus ? 'bold':''}
                                  italicsStyle={that.state.italicStatus ? 'italic':''}
                                  underlineStyle={that.state.underlineStatus ? 'underline':''}
@@ -151,7 +142,8 @@ const mapStateToProps = function(state){
   return {
     cellTitles: state.spreadsheetReducer.cellTitles,
     totalRows:state.spreadsheetReducer.totalRows,
-    activeCellValue:state.spreadsheetReducer.activeCellValue
+    activeCellValue:state.spreadsheetReducer.activeCellValue,
+    selectedCells:state.spreadsheetReducer.selectedCell
   }
 }
 

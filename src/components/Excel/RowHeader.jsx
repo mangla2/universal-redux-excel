@@ -21,9 +21,7 @@ export default class RowHeader extends React.Component {
     onMouseOut(){
       this.setState({ rowhover:false})
     }
-	handleOnClick(){
-			this.props.updateActiveCellValue({x: this.props.index, y : '', value :''});
-	    }
+
 	handleMouseDown(e){
 	 let selectedCells =[];
 
@@ -49,7 +47,7 @@ export default class RowHeader extends React.Component {
 		const classes = classnames('rowcolumnheaders','rowheaders');
         return (
 
-		    <td className={myStyle} style={this.style()} onMouseDown={this.handleMouseDown.bind(this)} onMouseOver={this.onMouseOver.bind(this)} onMouseOut={this.onMouseOut.bind(this)} onClick={this.handleOnClick.bind(this)} key={this.key} data-index={this.props.index}>{rowNumber}
+		    <td className={myStyle} style={this.style()} onMouseDown={this.handleMouseDown.bind(this)} onMouseOver={this.onMouseOver.bind(this)} onMouseOut={this.onMouseOut.bind(this)} key={this.key} data-index={this.props.index}>{rowNumber}
             </td>
         );
     }

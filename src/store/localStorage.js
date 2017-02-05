@@ -1,6 +1,7 @@
 const initialState = {
 	  onMouseDown:false,
 	  activeCellValue:'',
+    selectedCell:[],
 	  cellIndex : 9,
     cellCount : 9,
     rowIndex : 5,
@@ -63,4 +64,26 @@ const initialState = {
   ]}]
 };
 
-export default initialState;
+class Storage {
+    getState() {
+      let state;
+
+		if(typeof (localStorage) !== "undefined") {
+
+		   state = JSON.parse(localStorage.getItem('sheetstate'));
+      return (state === null) ? initialState : state ;
+		}
+    return initialState;
+	}
+	setState(state) {
+
+
+        if (typeof (localStorage) !== 'undefined') {
+            localStorage.setItem('sheetstate', JSON.stringify(state));
+			}
+
+    }
+}
+const storage = new Storage();
+
+export default storage;

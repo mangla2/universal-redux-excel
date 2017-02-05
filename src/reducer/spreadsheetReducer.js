@@ -1,6 +1,6 @@
-import initialState from "../store/initialState";
+import storage from "../store/localStorage";
 
-export default function spreadsheetReducer(state=initialState, action) {
+export default function spreadsheetReducer(state=storage.getState(), action) {
 
     switch (action.type) {
         case "UPDATED_ACTIVE_VALUE":{
@@ -8,6 +8,17 @@ export default function spreadsheetReducer(state=initialState, action) {
           const activeCellValue = action.payload;
 
             let newState = {...state , activeCellValue};
+            storage.setState(newState);
+            console.log(storage.getState());
+            return newState;
+        }
+        case "UPDATE_SELECTED_CELLS":{
+
+          const selectedCell = action.payload;
+
+            let newState = {...state , selectedCell};
+            storage.setState(newState);
+            console.log(storage.getState());
             return newState;
         }
         case "ADD_ROW": {
@@ -30,6 +41,7 @@ export default function spreadsheetReducer(state=initialState, action) {
 		    rowIndex = rowIndex + 1;
 
 		    let newState = {...state , totalRows, rowIndex};
+        storage.setState(newState);
 
 		    return newState;
 
@@ -66,7 +78,7 @@ export default function spreadsheetReducer(state=initialState, action) {
 		    }
 		    cellTitles.push(cellTitle);
 		    let newState = {...state, totalRows, cellCount, cellIndex, cellPrefix, cellTitles};
-
+            storage.setState(newState);
             return newState;
         }
         case "UPDATE_CELL": {
@@ -83,7 +95,7 @@ export default function spreadsheetReducer(state=initialState, action) {
 	       totalRows.push(row);
 		    });
      		let newState = {...state, totalRows};
-
+        storage.setState(newState);
           return newState;
         }
 

@@ -35,7 +35,7 @@ class CellHeader extends React.Component {
       this.props.selectedCell.map((columnCell)=> {
              if(columnCell.index === this.props.activeCellValue.x){
                columnStyle +='columnselected'
-              
+
              }
       })
 

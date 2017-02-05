@@ -4,6 +4,26 @@ require.extensions['.css'] = () => {
   return;
 };
 
+const jsdom = require('jsdom').jsdom;
+let localStorage
+global.document = jsdom('<!DOCTYPE html><html><head></head><body></body></html>');
+global.window = document.defaultView;
+global.XMLHttpRequest = window.XMLHttpRequest;
+global.navigator = window.navigator;
+
+if (typeof localStorage === "undefined" || localStorage === null) {
+  var LocalStorage = require('node-localstorage').LocalStorage;
+  localStorage = new LocalStorage('./uls-scratch');
+}else if (typeof window.localStorage === 'undefined' ||
+  typeof window.sessionStorage === 'undefined') {
+  localStorage = require('./rem-localstorage')
+}
+ else{
+
+   localStorage = window.localStorage;
+
+}
+
 const express = require('express');
 const webpack= require('webpack');
 const app = express();
@@ -16,6 +36,7 @@ import { match, RouterContext } from 'react-router';
 import configureStore from './src/store/configureStore';
 import { Provider } from 'react-redux';
 const routes = require('./src/routes');
+
 
 
 //Development Environment
@@ -44,8 +65,7 @@ app.use(express.static(path.resolve(__dirname,'src','assets')));
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname,'src','views'));
 const store=configureStore();
-console.log('mangla');
-console.log(store.getState());
+
 app.get('*', (req, res)=>{
 
   match({
@@ -63,7 +83,7 @@ app.get('*', (req, res)=>{
           <RouterContext {...renderProps} />
         </Provider>
       );
-      const finalizedState=store.getState();
+      const finalizedState=localStorage;
       res.render('index', {
         markup: html,
         initialState:finalizedState

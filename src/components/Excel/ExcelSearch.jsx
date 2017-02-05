@@ -37,7 +37,7 @@ else{
   }
   render(){
      return(
-       <div><input className="col-md-12" type="text" value={this.calculateIndex(this.props.activeCellValue)} /></div>
+       <div><input className="col-md-12" type="text"  defaultValue={this.calculateIndex(this.props.activeCellValue)} /></div>
      );
 
   }
