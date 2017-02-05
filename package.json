@@ -7,7 +7,7 @@
     "postbuild": "./node_modules/.bin/babel-node server.js",
     "build-dev": "npm run clean && webpack && npm run postbuild",
     "clean": "rm -rf dist && mkdir dist",
-    "prod": "SET NODE_ENV=production webpack --config ./webpack/webpack.config.prod.js --progress --colors",
+    "prod": "NODE_ENV=production webpack --config ./webpack/webpack.config.prod.js --progress --colors",
     "build-prod": "npm run clean && npm run prod && npm run postbuild"
   },
   "repository": {
