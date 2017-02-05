@@ -1,19 +1,17 @@
 const path = require('path');
 const webpack = require('webpack');
 const ExtractTextPlugin=require('extract-text-webpack-plugin');
-const assetsPath = path.resolve(__dirname, '/dist');
+
 module.exports = {
-  devtool: 'source-map',
+  devtool: 'cheap-module-source-map',
   context: path.resolve(__dirname),
   entry: {
-    app: [
-      './src/index.js',
-    ],
+    app: ['./src/index.js'],
   },
   output: {
-    path: assetsPath,
+    path: path.join(__dirname,'dist'),
     filename: '[name].bundle.js',
-    publicPath: '/',
+    publicPath: '/dist',
   },
   module: {
     loaders: [
