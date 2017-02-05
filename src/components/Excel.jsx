@@ -1,9 +1,9 @@
 import React,{ Component } from 'react';
 import { connect } from "react-redux";
 
-import ColumnHeader from "./excel/ColumnHeader.jsx";
-import CellRow from "./excel/CellRow.jsx";
-import ExcelSearch from './excel/ExcelSearch.jsx';
+import ColumnHeader from "./Excel/ColumnHeader.jsx";
+import CellRow from "./Excel/CellRow.jsx";
+import ExcelSearch from './Excel/ExcelSearch.jsx';
 import { addRow, addCell, updatedCellValue,updateCell,updateCopiedCells,pasteCell } from "../actions/Actions";
 
 require('../assets/style.css');
@@ -82,7 +82,7 @@ class Excel extends React.Component{
      if(evt.ctrlKey && (evt.keyCode === 67 || evt.keyCode === 86)) {
          switch(evt.keyCode) {
              case 67 :  {
-          
+
                if(that.state.selectedCells.length> 0) {
                        let copiedCells = that.state.selectedCells.map(function(cc, index) {
                return cc;
