@@ -1,5 +1,7 @@
 'use strict';
-require('babel-register');
+require('babel-register')({
+  presets: ['es2015', 'react','stage-2']
+});
 
 require.extensions['.css'] = () => {
   return;
@@ -31,12 +33,13 @@ const app = express();
 const path= require('path');
 var config = require('./webpack.config');
 const prodConfig=require('./webpack.config.prod.js');
-import React from 'react';
+const React=require('react');
 const ReactDOMServer = require('react-dom/server');
-import { renderToString } from 'react-dom/server';
-import { match, RouterContext } from 'react-router';
-import configureStore from './src/store/configureStore';
-import { Provider } from 'react-redux';
+const renderToString=require('react-dom/server').renderToString;
+const RouterContext = require('react-router').RouterContext
+const match =require('react-router').match;
+const configureStore=require('./src/store/configureStore');
+const Provider = require('react-redux').Provider;
 const routes = require('./src/routes');
 
 
