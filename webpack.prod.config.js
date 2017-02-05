@@ -6,7 +6,7 @@ module.exports = {
   devtool: 'source-map',
   context: path.resolve(__dirname),
   entry: {
-    main: [
+    app: [
       './src/index.js',
     ],
   },
