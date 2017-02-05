@@ -9,7 +9,7 @@ export default function spreadsheetReducer(state=storage.getState(), action) {
 
             let newState = {...state , activeCellValue};
             storage.setState(newState);
-            console.log(storage.getState());
+
             return newState;
         }
         case "UPDATE_SELECTED_CELLS":{
@@ -18,7 +18,7 @@ export default function spreadsheetReducer(state=storage.getState(), action) {
 
             let newState = {...state , selectedCell};
             storage.setState(newState);
-            console.log(storage.getState());
+
             return newState;
         }
         case "ADD_ROW": {
@@ -98,7 +98,50 @@ export default function spreadsheetReducer(state=storage.getState(), action) {
         storage.setState(newState);
           return newState;
         }
+        case "UPDATE_COPIED_CELLS" : {
+		    let copiedData= action.payload;
+		    let newState = {...state ,copiedData};
+		    return newState;
+		}
+        case "PASTE_DATA": {
+		    let activeCell  = action.payload;
+		    let values = state.copiedData;
+		    let direction = 'V';
+		    if(values.length > 1 && values[0].x === values[1].x) {
+			    direction = 'H';
+		    }
+		    let totalRows = [];
+		    let previousRows = state.totalRows;
+		    previousRows.map(function(row, rowIndex) {
+			    if(row.index === activeCell.x) {
+				    row.data.map(function(cell, cellIndex) {
+					   if(cell.y === activeCell.y) {
+						    row.data[cellIndex].value = values[0].value;
+						    if(direction === 'H') {
+							    for(let p = 1; p < values.length;p++) {
+								    let nextCell = row.data[cellIndex + p];
+							        if(nextCell) {
+								        row.data[cellIndex + p].value = values[p].value;
+								    }
+							    }
+						    } else if(values.length > 1) {
+						            for(let q = 1; q < values.length;q++) {
+							            let nextRow = previousRows[rowIndex + q];
+						   	            if (nextRow) {
+								           previousRows[rowIndex + q].data[cellIndex].value = values[q].value;
+							            }
 
+							        }
+						    }
+					    }
+				    });
+			    }
+	            totalRows.push(row);
+		    });
+		    let newState = {...state, totalRows};
+		    storage.setState(newState);
+            return newState;
+        }
         default:
         return state;
 

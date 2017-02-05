@@ -28,13 +28,15 @@ class CellRow extends React.Component {
 			tableCells.push(<Cell key={index + 1} celldata={tcell}
                        updateMouseDown={that.props.updateMouseDown}
                        updateCell={that.props.updateCell}
-
                        isMouseDown={that.props.isMouseDown}
                        activeCellValue={that.props.activeCellValue}
                        selected={that.props.selectedc}
                        boldClass={that.props.boldStyle}
                        italicsClass={that.props.italicsStyle}
                        underlineClass={that.props.underlineStyle}
+                       copyAxis={that.props.copyAxis}
+                       updateCopyAxis={that.props.updateCopyAxis}
+                       pasteCell={that.props.pasteCell}
                        />);
 		});
 

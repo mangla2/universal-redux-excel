@@ -2,6 +2,7 @@ const initialState = {
 	  onMouseDown:false,
 	  activeCellValue:'',
     selectedCell:[],
+    copiedData:[],
 	  cellIndex : 9,
     cellCount : 9,
     rowIndex : 5,

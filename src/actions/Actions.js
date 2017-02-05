@@ -32,3 +32,17 @@ export function updateCell(value, cellData) {
 	}
   }
 }
+
+export function updateCopiedCells(arr) {
+  return {
+    type: 'UPDATE_COPIED_CELLS',
+	payload : arr
+  }
+}
+
+export function pasteCell(cellData) {
+  return {
+    type: 'PASTE_DATA',
+	payload: cellData
+  }
+}

@@ -4,7 +4,7 @@ import { connect } from "react-redux";
 import ColumnHeader from "./excel/ColumnHeader.jsx";
 import CellRow from "./excel/CellRow.jsx";
 import ExcelSearch from './excel/ExcelSearch.jsx';
-import { addRow, addCell, updatedCellValue,updateCell } from "../actions/Actions";
+import { addRow, addCell, updatedCellValue,updateCell,updateCopiedCells,pasteCell } from "../actions/Actions";
 
 require('../assets/style.css');
 
@@ -18,8 +18,10 @@ class Excel extends React.Component{
       selectedCells:[],
       boldStatus:false,
       italicStatus:false,
-      underlineStatus:false
-
+      underlineStatus:false,
+      copyAxis : {
+			   x: '', y: '', direction :''
+		   }
     }
   }
 
@@ -29,14 +31,23 @@ class Excel extends React.Component{
        isMouseDown: value,
       })
    }
-
-  //  updateSelectedCells(arr){
-  //    this.setState({ selectedCells: arr })
-  //  }
    updateCell(value, cellData){
 		this.props.updateCellProps(value, cellData);
 	}
-
+  updateCopyAxis(x,y,d){
+   let copyAxis = this.state.copyAxis;
+   if(d) {
+     copyAxis.d = d;
+   } else {
+     copyAxis.x = x;
+     copyAxis.y = y;
+     copyAxis.d = '';
+   }
+     this.setState({copyAxis});
+ }
+  pasteCells(cellData){
+   this.props.paste(cellData);
+  }
    addRow(){
       this.props.addRow();
     }
@@ -66,7 +77,25 @@ class Excel extends React.Component{
       this.setState({ selectedCells: this.props.selectedCells })
     }
   }
-
+  handleKeyEvent(evt){
+     let that = this;
+     if(evt.ctrlKey && (evt.keyCode === 67 || evt.keyCode === 86)) {
+         switch(evt.keyCode) {
+             case 67 :  {
+               if(that.state.selectedCells.length> 0) {
+                       let copiedCells = that.state.selectedCells.map(function(cc, index) {
+               return cc;
+                       });
+               if(copiedCells.length > 0){
+                 
+                   that.props.updateCopiedValue(copiedCells);
+               }
+               }
+               break;
+             }
+         }
+     }
+   }
   componentWillMount(){
     console.error = (function() {
      var error = console.error
@@ -77,6 +106,10 @@ class Excel extends React.Component{
          }
      }
  })()
+ }
+
+ handleMouseUpEvent(e){
+     this.updateMouseDown(false);
  }
 
    render(){
@@ -99,7 +132,9 @@ class Excel extends React.Component{
                                  selectedCell={that.state.selectedCells}
                                  updateMouseDown={that.updateMouseDown.bind(that)}
                                  updateCell={that.updateCell.bind(that)}
-
+                                 copyAxis={that.state.copyAxis}
+                                 updateCopyAxis={that.updateCopyAxis.bind(that)}
+                                 pasteCell={that.pasteCells.bind(that)}
                                  boldStyle={that.state.boldStatus ? 'bold':''}
                                  italicsStyle={that.state.italicStatus ? 'italic':''}
                                  underlineStyle={that.state.underlineStatus ? 'underline':''}
@@ -122,11 +157,11 @@ class Excel extends React.Component{
             <div className="excel-table-wrapper col-md-12">
 
 	           <div className="col-md-12 excel-wrapper">
-	             	    <table id="excel-table">
+	             	    <table id="excel-table" onMouseUp={this.handleMouseUpEvent.bind(this)}>
 	             	        <thead><tr>
                               {tableHeads}
 		                        </tr></thead>
-		                    <tbody>
+		                    <tbody onKeyDown={this.handleKeyEvent.bind(this)}>
 						             {tableRows}
 		                    </tbody>
 		                </table>
@@ -143,7 +178,7 @@ const mapStateToProps = function(state){
     cellTitles: state.spreadsheetReducer.cellTitles,
     totalRows:state.spreadsheetReducer.totalRows,
     activeCellValue:state.spreadsheetReducer.activeCellValue,
-    selectedCells:state.spreadsheetReducer.selectedCell
+    selectedCells:state.spreadsheetReducer.selectedCell,
   }
 }
 
@@ -152,7 +187,10 @@ const mapDispatchToProps=(dispatch)=> {
 
     addRow:()=>{dispatch(addRow())},
     addColumn:()=>{dispatch(addCell())},
-    updateCellProps:(value,cellData)=>{dispatch(updateCell(value,cellData))}
+    updateCellProps:(value,cellData)=>{dispatch(updateCell(value,cellData))},
+    updateCopiedValue:(value)=>{dispatch(updateCopiedCells(value))},
+    paste:(cellData)=>{dispatch(pasteCell(cellData));
+	}
   }
 }
 

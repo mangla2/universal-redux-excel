@@ -35,7 +35,7 @@ class Cell extends React.Component {
    this.props.updateCell(value, this.props.celldata);
   }
  }
- handleKeyEvent = (evt) => {
+ handleKeyEvent(i,evt){
 	 if(evt.ctrlKey && (evt.which === 66 || evt.which === 73 || evt.which === 85 || evt.which === 86 )) {
 		var elm = evt.target;
 		evt.preventDefault();
@@ -51,11 +51,49 @@ class Cell extends React.Component {
 	   case 85 : {
 		     	elm.style.textDecoration = 'underline';
 	   }
-
+     case 86: {
+ 	    if(elm) {
+ 	     	this.props.pasteCell(this.props.celldata);
+ 		}
+ 		break
+ 	   }
 
 	}
 	 }
-  }
+   if(evt.which === 37 || evt.which ===38 || evt.which === 39 || evt.which === 40){
+     var elm = evt.target;
+ 		evt.preventDefault();
+    let activeCellPosition= this.props.selected;
+    let totalRows=[];
+
+    switch(evt.which){
+      case 37:
+      console.log('left');
+      totalRows.map(function(row, rowIndex) {
+        console.log(row.index);
+        if(row.index === activeCellPosition.x) {
+          row.data.map(function(cell, cellIndex) {
+           if(cell.y === activeCell.y) {
+             console.log('man yoohoo');
+           }
+         })
+      }
+    })
+      break;
+
+      case 38:
+      console.log('up');
+      break;
+      case 39:
+      console.log('right');
+       break;
+      case 40:
+      console.log('down');
+      break;
+    }
+   }
+
+}
     handleFocus(e){
 	    e.target.focus();
 
@@ -68,7 +106,23 @@ class Cell extends React.Component {
     onMouseOut() {
         this.setState({ hovered:false });
     }
-
+    handleMouseOver(e){
+      if (this.props.isMouseDown) {
+		  if(this.props.celldata.x ===  this.props.copyAxis.x || this.props.celldata.y === this.props.copyAxis.y) {
+			  if(this.props.copyAxis.d) {
+				  if(((this.props.celldata.x === this.props.copyAxis.x) && this.props.copyAxis.d === 'V') || ((this.props.celldata.y === this.props.copyAxis.y) && this.props.copyAxis.d === 'H')){
+					  return true;
+				  }
+			  } else{
+				    let direction = (this.props.celldata.x ===  this.props.copyAxis.x) ? 'H' : 'V';
+				    this.props.updateCopyAxis('','', direction);
+			  }
+		   let selectedCells = this.props.selected;
+		   selectedCells.push(this.props.celldata);
+		   this.props.updateSelected(selectedCells);
+	  }
+      }
+    }
    render() {
 	  let cell = JSON.stringify(this.props.celldata);
     let tdClass = '';
@@ -80,12 +134,16 @@ class Cell extends React.Component {
 	  })
     return (
 	          <td style={this.style()}  className={tdClass} key={this.key} onMouseOver={this.onMouseOver.bind(this)} onMouseOut={this.onMouseOut.bind(this)}  data-cell={cell} data-index={this.props.celldata.y}>
-              <div className="content-box" contentEditable onChange={this.changeHandler.bind(this)} onMouseDown={this.handleMouseDown.bind(this)} onFocus={this.handleFocus.bind(this)} onKeyDown={this.handleKeyEvent.bind(this)} onBlur={this.handleBlur.bind(this)}>{this.props.celldata.value}</div>
+              <div className="content-box" contentEditable onChange={this.changeHandler.bind(this)} onMouseOver={this.handleMouseOver.bind(this)} onMouseDown={this.handleMouseDown.bind(this)} onFocus={this.handleFocus.bind(this)} onKeyDown={this.handleKeyEvent.bind(this,this.key)} onBlur={this.handleBlur.bind(this)}>{this.props.celldata.value}</div>
             </td>
     );
   }
 }
-
+const mapStateToProps = function(state){
+  return {
+      totalRows:state.spreadsheetReducer.totalRows,
+  }
+}
 
 const mapDispatchToProps=(dispatch)=> {
   return {
@@ -94,4 +152,4 @@ const mapDispatchToProps=(dispatch)=> {
 
   }
 }
-export default connect(null,mapDispatchToProps)(Cell)
+export default connect(mapStateToProps,mapDispatchToProps)(Cell)
