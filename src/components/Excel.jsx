@@ -20,7 +20,7 @@ class Excel extends React.Component{
       italicStatus:false,
       underlineStatus:false,
       copyAxis : {
-			   x: '', y: '', direction :''
+			   x: '', y: '', d :''
 		   }
     }
   }
@@ -82,12 +82,13 @@ class Excel extends React.Component{
      if(evt.ctrlKey && (evt.keyCode === 67 || evt.keyCode === 86)) {
          switch(evt.keyCode) {
              case 67 :  {
+          
                if(that.state.selectedCells.length> 0) {
                        let copiedCells = that.state.selectedCells.map(function(cc, index) {
                return cc;
                        });
                if(copiedCells.length > 0){
-                 
+                 console.log(copiedCells);
                    that.props.updateCopiedValue(copiedCells);
                }
                }
@@ -107,11 +108,9 @@ class Excel extends React.Component{
      }
  })()
  }
-
- handleMouseUpEvent(e){
+ handleMouseUpEvent = (evt) => {
      this.updateMouseDown(false);
  }
-
    render(){
      let tableRows = [], tableHeads = [];
 		const that = this;
@@ -133,6 +132,7 @@ class Excel extends React.Component{
                                  updateMouseDown={that.updateMouseDown.bind(that)}
                                  updateCell={that.updateCell.bind(that)}
                                  copyAxis={that.state.copyAxis}
+
                                  updateCopyAxis={that.updateCopyAxis.bind(that)}
                                  pasteCell={that.pasteCells.bind(that)}
                                  boldStyle={that.state.boldStatus ? 'bold':''}

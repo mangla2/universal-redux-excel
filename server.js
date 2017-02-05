@@ -29,6 +29,7 @@ const webpack= require('webpack');
 const app = express();
 const path= require('path');
 var config = require('./webpack.config');
+const prodConfig=require('./webpack.prod.config.js');
 import React from 'react';
 const ReactDOMServer = require('react-dom/server');
 import { renderToString } from 'react-dom/server';
@@ -59,6 +60,8 @@ app.use(require('webpack-hot-middleware')(compiler));
 app.use(express.static(path.resolve(__dirname,'src','assets')));
 
 }else if(process.env.NODE_ENV === 'production') {
+  console.log('heyaaa');
+  var compiler = webpack(prodConfig);
   app.use(express.static(path.resolve(__dirname,'src','assets')));
 }
 
