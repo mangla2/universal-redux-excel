@@ -49,10 +49,6 @@ module.exports = {
 
         allChunks: true,
       }),
-    new webpack.optimize.UglifyJsPlugin({
-      compress: {
-        warnings: false,
-      },
-    }),
+    
   ],
 };
