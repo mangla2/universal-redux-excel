@@ -1,4 +1,5 @@
 'use strict';
+require('babel-register');
 
 require.extensions['.css'] = () => {
   return;
@@ -29,7 +30,7 @@ const webpack= require('webpack');
 const app = express();
 const path= require('path');
 var config = require('./webpack.config');
-const prodConfig=require('./webpack.prod.config.js');
+const prodConfig=require('./webpack.config.prod.js');
 import React from 'react';
 const ReactDOMServer = require('react-dom/server');
 import { renderToString } from 'react-dom/server';
