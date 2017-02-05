@@ -4,7 +4,7 @@
   "description": "A project to showcase Excel-like spreadsheet features in react and redux universally.",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js --exec babel --presets es2015,stage-2",
+    "serve": "node server.js --exec babel --presets es2015,stage-2",
     "build": "webpack --verbose --colors --display-error-details --config webpack.prod.config.js",
     "postinstall": "npm run build"
   },
