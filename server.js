@@ -32,19 +32,18 @@ const webpack= require('webpack');
 const app = express();
 const path= require('path');
 var config = require('./webpack.config');
-const prodConfig=require('./webpack.config.prod.js');
 const React=require('react');
 const ReactDOMServer = require('react-dom/server');
 const renderToString=require('react-dom/server').renderToString;
 const RouterContext = require('react-router').RouterContext
 const match =require('react-router').match;
-const configureStore=require('./src/store/configureStore');
+import configureStore from './src/store/configureStore';
 const Provider = require('react-redux').Provider;
 const routes = require('./src/routes');
 
+const port = process.env.PORT || 8080;
 
-
-//Development Environment
+// Development Environment
 if (process.env.NODE_ENV !== 'production') {
 var compiler = webpack(config);
 app.use(require('webpack-dev-middleware')(compiler, {
@@ -59,15 +58,21 @@ app.use(require('webpack-dev-middleware')(compiler, {
       hot: true,
     },
 }));
-
-app.use(require('webpack-hot-middleware')(compiler));
-app.use(express.static(path.resolve(__dirname,'src','assets')));
-
-}else if(process.env.NODE_ENV === 'production') {
-  console.log('heyaaa');
-  var compiler = webpack(prodConfig);
-  app.use(express.static(path.resolve(__dirname,'src','assets')));
+app.listen(port, function () {
+   console.log('Server listening on port',port);
+});
 }
+else if(process.env.NODE_ENV === 'production'){
+  app.listen(port, function () {
+     console.log('Server listening on port',port);
+  });
+}
+
+//
+// app.use(require('webpack-hot-middleware')(compiler));
+// app.use(express.static(path.resolve(__dirname,'src','assets')));
+//
+// }
 
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname,'src','views'));
@@ -104,8 +109,4 @@ app.get('*', (req, res)=>{
 app.get('/api/', function (req, res) {
   console.log('you hit the api')
   res.send('you hit the api');
-});
-
-app.listen(3000, function () {
-   console.log('Server listening on port', 3000);
 });

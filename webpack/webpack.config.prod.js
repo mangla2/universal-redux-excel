@@ -3,22 +3,22 @@ const webpack = require('webpack');
 const ExtractTextPlugin=require('extract-text-webpack-plugin');
 
 module.exports = {
-  devtool: 'cheap-module-source-map',
-  context: path.resolve(__dirname),
+  devtool:'source-map',
+  context: path.resolve(__dirname,'..'),
   entry: {
     app: ['./src/index.js'],
   },
   output: {
-    path: path.join(__dirname,'dist'),
+    path: path.join(__dirname,'..','dist'),
     filename: '[name].bundle.js',
-    publicPath: '/dist',
+    publicPath: '/',
   },
   module: {
     loaders: [
       {
         test: /\.(js|jsx)?$/,
         exclude: /node_modules/,
-        loader: 'babel?presets[]=es2015,presets[]=stage-2,presets[]=react',
+        loader: 'babel',
       },
       {
           test: /\.css$/,
@@ -38,7 +38,8 @@ module.exports = {
   plugins: [
     new webpack.DefinePlugin({
       'process.env': {
-        'NODE_ENV': JSON.stringify('production')
+        'NODE_ENV': JSON.stringify('production'),
+        'API':'https://universal-redux-excel.herokuapp.com'
       },
 
     }),

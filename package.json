@@ -4,10 +4,11 @@
   "description": "A project to showcase Excel-like spreadsheet features in react and redux universally.",
   "main": "server.js",
   "scripts": {
-    "clean": "rm -rf build && mkdir build",
-    "build-server": "babel -d ./dist ./server.js -s",
-    "build": "npm run clean && npm run build-css && npm run build-server",
-    "start": "node ./server.js"
+    "postbuild": "./node_modules/.bin/babel-node server.js",
+    "build-dev": "npm run clean && webpack && npm run postbuild",
+    "clean": "rm -rf dist && mkdir dist",
+    "prod": "SET NODE_ENV=production webpack --config ./webpack/webpack.config.prod.js --progress --colors",
+    "build-prod": "npm run clean && npm run prod && npm run postbuild"
   },
   "repository": {
     "type": "git",
@@ -27,6 +28,7 @@
   },
   "homepage": "https://github.com/mangla2/universal-redux-excel#readme",
   "dependencies": {
+    "babel": "^6.5.2",
     "babel-cli": "^6.22.2",
     "babel-core": "^6.22.1",
     "babel-loader": "^6.2.10",

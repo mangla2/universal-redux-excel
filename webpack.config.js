@@ -44,7 +44,8 @@ const config={
   new webpack.DefinePlugin({
     'process.env':{
     'NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development'),
-    'BROWSER':JSON.stringify(true)
+    'BROWSER':JSON.stringify(true),
+    'API':'http://localhost'
   }
 }),
   new webpack.optimize.DedupePlugin(),
